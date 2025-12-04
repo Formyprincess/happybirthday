@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, My Princess</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Tone.js for background music -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+    
+    <!-- Configure Tailwind to use Inter font and custom colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-pink': '#FF69B4', // Hot Pink
+                        'secondary-gold': '#FFD700', // Gold
+                        'light-bg': '#FFF0F5', // Lavender Blush
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    keyframes: {
+                        confetti: {
+                            '0%, 100%': { transform: 'translateY(-100%) rotate(0deg)' },
+                            '50%': { transform: 'translateY(100%) rotate(180deg)' },
+                        },
+                        heartBeat: {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.1)' }
+                        },
+                        fadeIn: {
+                            from: { opacity: 0, transform: 'translateY(10px)' },
+                            to: { opacity: 1, transform: 'translateY(0)' }
+                        }
+                    },
+                    animation: {
+                        confetti: 'confetti 10s linear infinite',
+                        heartBeat: 'heartBeat 1.5s ease-in-out infinite',
+                        fadeIn: 'fadeIn 0.5s ease-out forwards'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for background and confetti effect */
+        body {
+            background-color: theme('colors.light-bg');
+            background-image: linear-gradient(135deg, theme('colors.light-bg') 0%, #ffe4e6 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to the top of the viewport */
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Confetti effect (visual enhancement) */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: theme('colors.primary-pink');
+            border-radius: 50%;
+            opacity: 0.7;
+            animation: confetti 10s linear infinite;
+        }
+        .confetti:nth-child(2n) { background-color: theme('colors.secondary-gold'); width: 8px; height: 8px; animation-duration: 7s; }
+        .confetti:nth-child(3n) { background-color: #fca5a5; width: 6px; height: 6px; animation-duration: 9s; }
+        .confetti:nth-child(4n) { background-color: #a5f3fc; width: 12px; height: 12px; animation-duration: 6s; }
+        
+        /* Message Reveal Card Hover/Active States */
+        #revealCard.clickable:hover {
+            box-shadow: 0 10px 15px -3px rgba(255, 105, 180, 0.5), 0 4px 6px -2px rgba(255, 105, 180, 0.25);
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- --- START AUDIO OVERLAY --- -->
+    <div id="audioStartOverlay" class="fixed inset-0 bg-light-bg/95 backdrop-blur-sm z-50 flex items-center justify-center transition-opacity duration-700 ease-out">
+        <div class="text-center p-8 bg-white rounded-3xl shadow-2xl border-4 border-primary-pink animate-fadeIn transform scale-100 transition duration-500">
+            <p class="text-3xl font-extrabold text-primary-pink mb-4">Happy Birthday My Princess</p>
+            <button id="startButton" class="px-8 py-4 text-xl font-bold rounded-full text-white bg-secondary-gold shadow-lg shadow-secondary-gold/50 hover:bg-yellow-500 transition duration-300 transform hover:scale-105 active:scale-95">
+               Click here
+            </button>
+        </div>
+    </div>
+    <!-- --- END AUDIO OVERLAY --- -->
+
+
+    <!-- Confetti Background Layer -->
+    <div class="confetti-container">
+        <!-- Generate 10 confetti pieces at random positions -->
+        <div class="confetti" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="confetti" style="left: 20%; animation-delay: 1s;"></div>
+        <div class="confetti" style="left: 30%; animation-delay: 2s;"></div>
+        <div class="confetti" style="left: 40%; animation-delay: 3s;"></div>
+        <div class="confetti" style="left: 50%; animation-delay: 4s;"></div>
+        <div class="confetti" style="left: 60%; animation-delay: 0.5s;"></div>
+        <div class="confetti" style="left: 70%; animation-delay: 1.5s;"></div>
+        <div class="confetti" style="left: 80%; animation-delay: 2.5s;"></div>
+        <div class="confetti" style="left: 90%; animation-delay: 3.5s;"></div>
+        <div class="confetti" style="left: 95%; animation-delay: 4.5s;"></div>
+    </div>
+
+    <!-- Main Card Wrapper -->
+    <main class="w-full max-w-4xl p-4 md:p-8">
+
+        <!-- Header and Main Greeting (Always full width) -->
+        <header class="text-center mb-10 bg-white p-8 rounded-3xl shadow-2xl border-4 border-secondary-gold">
+            <p class="text-xl font-semibold text-primary-pink">To my most wonderful person,</p>
+            <h1 class="text-5xl md:text-6xl font-extrabold text-gray-800 mt-2 leading-tight">
+                Happy Birthday! 🥳
+            </h1>
+            <div class="mt-4 flex justify-center space-x-2">
+                <svg class="w-8 h-8 text-primary-pink fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                <span class="text-2xl font-bold text-secondary-gold">My Rasmalai</span>
+                <svg class="w-8 h-8 text-primary-pink fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+        </header>
+
+        <!-- Card Container: Stacked layout -->
+        <div class="flex flex-col gap-6">
+
+            <!-- Card 1: Video Section -->
+            <section class="p-6 bg-white rounded-xl shadow-xl border-4 border-secondary-gold/50 hover:shadow-2xl transition duration-300">
+                <div class="relative pb-[56.25%] h-0 overflow-hidden rounded-lg shadow-xl">
+                    <!-- 
+                        IMPORTANT: Replace the 'src' value below with the direct URL 
+                        of your video (e.g., a private YouTube link or an embedded video). 
+                    -->
+                    <video id="birthdayVideo" controls class="absolute top-0 left-0 w-full h-full object-cover">
+                        <source src="video.mp4" type="video/mp4">
+                        Your browser does not support the video tag. Please replace the video source with your own file.
+                    </video>
+                </div>
+                <p class="text-center text-sm text-gray-500 mt-3">Press play😊</p>
+            </section>
+
+            <!-- Card 2: Interactive Image Container for Message Reveal -->
+            <section id="revealCard" class="clickable p-6 bg-white rounded-xl shadow-xl border-4 border-primary-pink/70 cursor-pointer transition duration-300">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-gray-700 mb-6">Your Birthday Surprise!</h2>
+                    
+                    <!-- Clickable Image/Icon Container -->
+                    <div id="imageContainer" class="w-full max-w-xs mx-auto p-8 bg-light-bg rounded-2xl shadow-lg border-4 border-primary-pink/50 transition duration-300 transform hover:scale-[1.05]">
+                        
+                        <!-- Main Icon (Animated Heart Box) -->
+                        <div id="iconBox" class="relative">
+                             <!-- Gift Box SVG (Heart) -->
+                            <svg class="w-32 h-32 mx-auto text-primary-pink fill-current transition duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 21.5l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.5z"></path>
+                                <rect x="3" y="10" width="18" height="11" rx="2"></rect>
+                                <path d="M12 10v11"></path>
+                                <path d="M19 10H5"></path>
+                            </svg>
+                            <!-- Animated Small Heart (Hidden on click) -->
+                            <svg id="smallHeart" class="absolute top-0 right-0 w-10 h-10 text-red-500 fill-current animate-heartBeat" viewBox="0 0 24 24">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </div>
+                        
+                        <p id="revealText" class="mt-4 text-xl font-bold text-primary-pink">Click to Reveal Your Gift! 🎁</p>
+                    </div>
+
+                    <!-- Hidden Message Container (Now includes an image!) -->
+                    <div id="secretMessage" class="hidden mt-8 p-6 bg-secondary-gold/20 border-l-4 border-secondary-gold rounded-xl text-gray-700 text-lg shadow-inner animate-fadeIn">
+                        <p class="font-bold text-primary-pink mb-2 text-2xl">My Dearest Mrunmayee,</p>
+
+                        <!-- IMAGE CONTAINER INSIDE MESSAGE -->
+                        <div class="my-4 w-full flex justify-center">
+                            <!-- NOTE: Replace this placeholder with a small, personal image! -->
+                            <img src="img.png" 
+                                 alt="A personal gift photo" 
+                                 class="rounded-xl shadow-lg border-2 border-primary-pink object-cover" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/200x150?text=Gift+Photo';">
+                        </div>
+                        <!-- END IMAGE CONTAINER -->
+
+                        <p>
+                            Happy Birthday, my Cutu ❤️ I can’t even put into words how grateful I am that you exist you’re my favorite person, my soft place to land, and the most beautiful part of my life. I hope today wraps you in love, laughter, and everything your heart desires, because you deserve the absolute best. Thank you for being the reason my heart feels full and my days feel brighter. I love you more than forever, and I’m so lucky I get to celebrate you.
+                        </p>
+                        <p class="mt-4 font-semibold text-right">- Your Sweetie</p>
+                    </div>
+                </div>
+            </section>
+
+        </div> <!-- End Card Container -->
+
+    </main>
+
+    <script>
+        // --- TONE.JS MUSIC SETUP ---
+        let messageRevealed = false;
+        let melodyLoop = null;
+
+        // Define the "Happy Birthday" notes sequence (simplified)
+        const notes = [
+            { note: "C4", duration: "4n" }, { note: "C4", duration: "4n" }, 
+            { note: "D4", duration: "2n" }, { note: "C4", duration: "2n" }, 
+            { note: "F4", duration: "2n" }, { note: "E4", duration: "1n" }, 
+            
+            { note: "C4", duration: "4n" }, { note: "C4", duration: "4n" }, 
+            { note: "D4", duration: "2n" }, { note: "C4", duration: "2n" }, 
+            { note: "G4", duration: "2n" }, { note: "F4", duration: "1n" }, 
+        ];
+
+        function startBirthdaySong() {
+            // 1. Gain Node for volume control (softer)
+            const gain = new Tone.Gain(0.5).toDestination(); // 0.5 is half volume
+
+            // A synth instrument with a slightly cute sound (Increased decay for softer attack/release)
+            const synth = new Tone.Synth({
+                oscillator: {
+                    type: "triangle" 
+                },
+                envelope: {
+                    attack: 0.005,
+                    decay: 0.3, // Increased decay for a slightly smoother, softer sound (was 0.1)
+                    sustain: 0.3,
+                    release: 1
+                }
+            }).connect(gain); // Route synth through the gain node
+
+            // 2. Set the tempo faster
+            Tone.Transport.bpm.value = 180; // Increased BPM for faster tempo (was 140)
+
+            let index = 0;
+            
+            // Create a looping pattern
+            melodyLoop = new Tone.Loop(time => {
+                const noteData = notes[index % notes.length];
+                
+                // Schedule the note
+                synth.triggerAttackRelease(noteData.note, noteData.duration, time);
+                
+                index++;
+                // Reset index if loop finishes to restart from the beginning
+                if (index >= notes.length) {
+                    index = 0;
+                }
+            }, "2n").start(0); // Loop runs every half note
+
+            // Start the main transport
+            Tone.Transport.start();
+        }
+
+        // --- AUDIO START OVERLAY LOGIC ---
+        const startButton = document.getElementById('startButton');
+        const audioStartOverlay = document.getElementById('audioStartOverlay');
+
+        startButton.addEventListener('click', async () => {
+            // 1. Start the Audio Context and music (required by browsers)
+            await Tone.start();
+            startBirthdaySong();
+
+            // 2. Hide the overlay smoothly
+            audioStartOverlay.style.opacity = '0';
+            setTimeout(() => {
+                audioStartOverlay.classList.add('hidden');
+            }, 700);
+        });
+
+        // --- INTERACTIVE MESSAGE REVEAL LOGIC ---
+        const revealCard = document.getElementById('revealCard');
+        const imageContainer = document.getElementById('imageContainer');
+        const secretMessage = document.getElementById('secretMessage');
+        const revealText = document.getElementById('revealText');
+        const smallHeart = document.getElementById('smallHeart');
+
+        revealCard.addEventListener('click', async () => {
+            if (messageRevealed) return; // Prevent multiple clicks
+
+            // 1. Show the message
+            secretMessage.classList.remove('hidden');
+            secretMessage.classList.add('animate-fadeIn'); 
+            
+            // 2. Update visual feedback
+            revealText.textContent = 'Message Revealed! 🎉';
+            imageContainer.classList.remove('hover:scale-[1.05]');
+            imageContainer.classList.add('scale-100');
+            smallHeart.classList.add('hidden'); // Hide the pulsing heart
+
+            // 3. Update the card state
+            revealCard.classList.remove('clickable', 'cursor-pointer');
+            revealCard.classList.remove('border-primary-pink/70');
+            revealCard.classList.add('border-secondary-gold', 'bg-secondary-gold/10');
+            
+            messageRevealed = true;
+
+            // Optional: Scroll down to ensure the message is visible if the screen is small
+            secretMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    </script>
+</body>
+</html>
